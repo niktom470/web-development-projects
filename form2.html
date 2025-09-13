@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form 2</title>
+</head>
+<body>
+     <h2>EVENT REGISTRATION</h2>
+    <form>
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name">
+    <br/>
+    <br/>
+
+    <label for="emailID">Email ID:</label>
+    <input type="email" id="emailID" name="emailID">
+    <br/>
+    <br/>
+
+    <label for="phoneNumber">Phone :</label>
+    <input type="tel" id="phoneNumber" name="phoneNumber">
+    <br/>
+    <br/>
+    <label for="resume">Resume</label>
+    <input type="file" name="resume" id="resume">
+    <fieldset>
+    <legend>Skills</legend>
+
+    <label for="checkbox1">HTML</label>
+    <input type="checkbox" name="checkbox" id="checkbox1">
+
+    <label for="checkbox2">CSS</label>
+    <input type="checkbox" name="checkbox" id="checkbox2">
+
+    <label for="checkbox3">JavaScript</label>
+    <input type="checkbox" name="checkbox" id="checkbox3">
+   
+
+</fieldset>
+<br>
+<br><br>
+<label for="experience">Experience</label>
+<input type="number" name="counter" id="counter" min="0" max="50" placeholder="0"><br>
+<br><br>
+<label for="education">Higher Education</label>
+ <select name="education" id="education">
+        <option value="a">A</option>
+        <option value="b">B</option>
+        <option value="c">C</option>
+        <option value="d">D</option>
+        <option value="e">E</option>
+    </select>
+    <br>
+    <br>
+    <fieldset>
+    <legend>Availability:</legend>
+
+    <label for="radio1">Full-time</label>
+    <input type="radio" name="radio" id="radio1">
+    <br/>
+
+    <label for="radio2">Part-time</label>
+    <input type="radio" name="radio" id="radio2">
+    <br/>
+
+</fieldset>
+<label for="textarea1">comments</label><br/>
+    <br/>
+<textarea name="textarea" id="textarea1">(optional)</textarea>
+<br>
+<input type="submit" name="submit" id="submit">
+    </form>
+</body>
+</html>
