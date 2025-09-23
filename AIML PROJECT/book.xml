@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book>
+  <ITEM>
+    <IMAGE>./Data-Structures-and-Algorithms-Made-SDL353286533-1-53f19.avif</IMAGE>
+    <NAME>Data Structures and Algorithms Made Easy</NAME>
+    <AUTHOR>Narasimha Karumanchi</AUTHOR>
+    <PUBLISHER>CAREER MONK</PUBLISHER>
+    <PRICE>15</PRICE>
+  </ITEM>
+  <ITEM>
+    <IMAGE>./java.jpg</IMAGE>
+    <NAME>JAVA Programming Simplified</NAME>
+    <AUTHOR>Dr. Muneer Ahmad Dar</AUTHOR>
+    <PUBLISHER>BPB</PUBLISHER>
+    <PRICE>18</PRICE>
+  </ITEM>
+  <ITEM>
+    <IMAGE>./dstl.jpg</IMAGE>
+    <NAME>Textbook Of Discrete Mathematics</NAME>
+    <AUTHOR>Swapan Kumar Sarkar</AUTHOR>
+    <PUBLISHER>S CHAND</PUBLISHER>
+    <PRICE>28</PRICE>
+  </ITEM>
+  
+</book>
