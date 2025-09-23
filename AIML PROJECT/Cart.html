@@ -1,117 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Book Store</title>
-    <style>
-      table{
-        background-color:#8FBC8F;
-      }
-      p{
-        font-size: 2rem;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <table width="100%" border="3" cellspacing="0" cellpadding="0">
-        <tr>
-          <td align="center">
-            <img src="./JSSATE_Noida.png" alt="LOGO" width="70px" />
-          </td>
-          <td colspan="4" >
-            <h1 style="text-align: center">
-              JSS LIBRARY,NOIDA
-            </h1>>
-          </td>
-        </tr>
-        <tr>
-          <td align="center">
-            <a href="./book store.html"
-              ><img src="./home.png" alt="HOME" width="40px"
-            /></a>
-          </td>
-          <td align="center">
-            <a href="./form1.html">Login</a>
-            
-          </td>
-          <td align="center">
-            <a href="./form1.html">Registration</a>
-            
-          </td>
-          <td align="center">
-            <a href="./catalogue.html">Catalogue</a>
-          </td>
-          <td align="center">
-            <a href="./Cart.html">Cart</a>
-          </td>
-        </tr>
-      </table>
-    </header>
-     <table border="3" cellpadding="10" cellspacing="0" width="100%" height="70%">
-     <th>
-     
-      <td>Books</td>
-      <td>Price and Details</td>
-      <td>ADD TO Cart</td>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart</title>
+  <link rel="stylesheet" href="Style.css">
+  <style>
+    table {
+      background-color: #8FBC8F;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 3px solid black;
+      padding: 10px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    button {
+      padding: 5px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    // Function to alert when a CSE book is selected
+    function selectCSEBook() {
+      window.alert("You have selected the CSE book");
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <table width="100%" border="3" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">
+          <img src="./JSSATE_Noida.png" alt="LOGO" width="70px" />
+        </td>
+        <td colspan="4">
+          <h1 style="text-align: center">JSS LIBRARY, NOIDA</h1>
+        </td><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart</title>
+  <style>
+    table {
+      background-color: #8FBC8F;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 3px solid black;
+      padding: 10px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    button {
+      padding: 5px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    // Function to remove the row of the clicked Remove button
+    function removeRow(button) {
+      const row = button.parentNode.parentNode; // <td> → <tr>
+      row.parentNode.removeChild(row);
+      updateTotal();
+    }
 
-     </th>
-  <tr>
-    <td rowspan="3">
-      <a href="">CSE<br></a>
-      <a href="">IT<br></a>
-      <a href="">ECE<br></a>
-      <a href="">EE<br></a>
-     <a href=""> CIVIL</a>
-    </td>
-   <td width="30%">
-    <img src="./Data-Structures-and-Algorithms-Made-SDL353286533-1-53f19.avif" alt="DSA BOOK" height="80%" width="30%">
-    </td>
-    <td>
-    <p>BOOK : Data Structures and Algorithms Made Easy</p>
-    <p>AUTHOR : Narasimha Karumanchi</p>
-    <p>PUBLICATION: CAREER MONK</p>
-    <p>PRICE :$15</p>
-   </td>
-   <td>
-    <button>ADD TO CART</button>
-   </td>
-    <br>
-    </tr>
+    // Function to update the total price after removing rows
+    function updateTotal() {
+      const table = document.querySelector('table');
+      let total = 0;
+      // Loop through all rows except header and last two rows
+      for(let i = 1; i < table.rows.length - 2; i++) {
+        const amount = parseFloat(table.rows[i].cells[3].innerText);
+        total += amount;
+      }
+      // Update total price cell
+      table.rows[table.rows.length - 2].cells[3].innerText = total;
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <table width="100%" border="3" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">
+          <img src="./JSSATE_Noida.png" alt="LOGO" width="70px" />
+        </td>
+        <td colspan="4">
+          <h1 style="text-align: center">JSS LIBRARY, NOIDA</h1>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <a href="./book store.html"><img src="./home.png" alt="HOME" width="40px" /></a>
+        </td>
+        <td align="center"><a href="./form1.html">Login</a></td>
+        <td align="center"><a href="./form1.html">Registration</a></td>
+        <td align="center"><a href="./catalogue.html">Catalogue</a></td>
+        <td align="center"><a href="./Cart.html">Cart</a></td>
+      </tr>
+    </table>
+  </header>
+
+  <br />
+
+  <!-- Cart Table -->
+  <table border="3" cellpadding="10" cellspacing="0" width="100%" height="70%">
     <tr>
-    <td>
-    <img src="./java.jpg" alt="JAVA BOOK" height="80%" width="35%">
-    <br>
-    </td>
-    <td>
-    <p>BOOK :JAVA Programming Simplified </p>
-    <p>AUTHOR : Dr. Muneer Ahmad Dar </p>
-    <p>PUBLICATION: BPB</p>
-    <p>PRICE :$18</p>
-    <br>
-    </td>
-       <td>
-    <button>ADD TO CART</button>
-       </td>
+      <!-- Header row -->
+      <th>Book Name</th>
+      <th>Price ($)</th>
+      <th>Quantity</th>
+      <th>Amount ($)</th>
+      <th>Action</th> <!-- New column for Remove button -->
     </tr>
+
     <tr>
-    <td>
-    <img src="./dstl.jpg" alt="DSTL BOOK"  height="80%" width="35%">
-    <br>
-   </td>
-   <td>
-    <p>BOOK : Textbook Of Discrete Mathematics</p>
-    <p>AUTHOR :  Swapan Kumar Sarkar</p>
-    <p>PUBLICATION: S CHAND</p>
-    <p>PRICE :$28</p>
-  <br> 
-   </td>
-   <td>
-    <button>ADD TO CART</button>
-       </td>
-  </tr>
-</table>
-    
+      <!-- First book row -->
+      <td>Data Structures and Algorithms Made Easy</td>
+      <td>15</td>
+      <td>1</td>
+      <td>15</td>
+      <td><button onclick="removeRow(this)">Remove</button></td>
+    </tr>
+
+    <tr>
+      <!-- Second book row -->
+      <td>JAVA Programming Simplified</td>
+      <td>18</td>
+      <td>2</td>
+      <td>36</td>
+      <td><button onclick="removeRow(this)">Remove</button></td>
+    </tr>
+
+    <tr>
+      <!-- Third book row -->
+      <td>Textbook Of Discrete Mathematics</td>
+      <td>28</td>
+      <td>3</td>
+      <td>84</td>
+      <td><button onclick="removeRow(this)">Remove</button></td>
+    </tr>
+
+    <!-- Total Price row -->
+    <tr>
+      <td colspan="3" style="text-align: right; font-weight: bold;">Total Price:</td>
+      <td>135</td>
+      <td></td>
+    </tr>
+
+    <!-- Buy button row -->
+    <tr>
+      <td colspan="5" style="text-align: center;">
+        <button onclick="window.alert('Thank you for your purchase!')">BUY ITEM(S)</button>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
