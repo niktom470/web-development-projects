@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>insight</title>
+  <style>
+     *{
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+        .container{
+            width: 100%;
+
+            height: 100%;
+            min-height: 750px;
+         background: #74ebd5;  
+         background: -webkit-linear-gradient(to left, #ACB6E5, #74ebd5); 
+         background: linear-gradient(to left, #ACB6E5, #74ebd5); 
+         display: flex; 
+         justify-content: center;
+         align-items: center;
+        }
+        .card{
+              width: 800px;
+             height: 400px ;
+              display: flex;
+              flex-direction: row;
+              /* border: 2px solid black; */
+              background-color: rgb(101, 34, 124);
+              justify-content: space-around;
+            }
+            #leftbox{
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                color: white;
+            }
+            #h1{
+                display: flex;
+              flex-direction: column;
+              gap: 40px;
+              padding-left: 30px;
+            }
+            #foot{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+            #rightbox{
+                display: flex;
+
+                height: 100%;
+                width: 100%;
+            }
+            #imgbox {
+              display: flex;
+ 
+              width: 100%;
+              height: 100%;
+              overflow: hidden;          
+}
+
+#imgbox img {
+  max-width: 100%; 
+  max-height: 100%;  
+ 
+}
+
+            
+  </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div id="leftbox">
+             <div id="h1">
+                <h1>Get insight that help your buisness grow</h1>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam nesciunt dicta earum deleniti consectetur saepe iure doloribus eligendi corrupti impedit.</p>
+            </div>
+            <div id="foot">
+                <div id="f2">
+                    <h2>10k+</h2>
+                    <p>Comments</p>
+                </div>
+                <div id="f2">
+                     <h2>214</h2>
+                    <p>Paid Users</p>
+                </div>
+                <div id="f2">
+                     <h2>12M+</h2>
+                    <p>Views</p>
+                </div>
+             </div>
+            </div>
+            <div id="rightbox">
+                <div id="imgbox">
+                    <img src="./printed-circuit-boards.webp" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
