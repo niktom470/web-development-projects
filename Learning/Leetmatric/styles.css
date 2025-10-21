@@ -1,0 +1,79 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+}
+body{
+    background-color: rgb(169, 171, 194);
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    gap: 2 rem;
+
+
+    padding: 20px;
+    background-color: #814d19;
+    border-radius: 5px;
+    width: 50%;
+    max-width: 600px; 
+}
+h1{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: start;
+
+}
+.user-input-container{
+    display: flex;
+    justify-content: space-between;
+}
+#user-input{
+    width: 80%;
+    padding: 0.4rem;
+    border-radius:5px ;
+}
+#search-btn{
+color: azure;
+width: 30%;
+padding:0.8 rem;
+border-radius: 5px;
+margin-left: 5px;
+background-color: #db3bea;
+}
+
+.circle{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #299f5d;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    font-weight: 700;
+    background: conic-gradient(#299f5d var(-progress-degree,0px),
+    #283a2e 0%);
+    /* padding: 10px; */
+    margin-top: 15px;
+}
+.circle span{
+    position: relative;
+    z-index: 2;
+}
+.progress{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 10px;
+}

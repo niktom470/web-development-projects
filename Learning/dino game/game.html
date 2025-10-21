@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Skybound Dino — Jumping Game</title>
+  <style>
+    :root{
+      --bg:#cbe3ff;
+      --ground:#7b5e3c;
+      --dino:#1b2b18;
+      --accent:#ffde59;
+      --ui:rgba(0,0,0,0.6);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(180deg,var(--bg) 0%, #98d1ff 60%);
+      transition:background 0.6s ease;
+      -webkit-font-smoothing:antialiased;
+    }
+    .wrap{width:min(980px,95vw);max-width:980px;padding:18px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;color:var(--ui)
+    }
+    h1{font-size:18px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    .btn{background:transparent;border:1px solid rgba(0,0,0,0.08);padding:6px 10px;border-radius:10px;cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+
+    /* game area */
+    .game-card{background:rgba(255,255,255,0.6);backdrop-filter:blur(6px);border-radius:14px;padding:12px;box-shadow:0 10px 30px rgba(20,30,50,0.12)}
+    canvas{display:block;width:100%;height:420px;border-radius:10px;background:transparent}
+    .hud{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    .score{font-weight:700;color:#333}
+    .hint{color:#666;font-size:13px}
+    .footer{margin-top:10px;color:#444;font-size:13px}
+
+    /* overlay modal */
+    .overlay{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(rgba(0,0,0,0.25),rgba(0,0,0,0.25));}
+    .panel{background:white;padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.25);max-width:420px;width:92%}
+    .panel h2{margin:0 0 8px 0}
+    .small{font-size:13px;color:#666}
+
+    footer.small-note{margin-top:12px;color:#555;font-size:13px}
+
+    @media (max-width:560px){canvas{height:340px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Skybound Dino — Jumping Game</h1>
+      <div class="controls">
+        <button class="btn" id="btnRestart">Restart</button>
+        <button class="btn" id="btnMute">🔊</button>
+        <button class="btn" id="btnHelp">Help</button>
+      </div>
+    </header>
+
+    <div class="game-card">
+      <canvas id="game"></canvas>
+      <div class="hud">
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="hint">Controls: Space / Up arrow / Tap</div>
+      </div>
+      <div class="footer">Highscore: <span id="high">0</span></div>
+    </div>
+
+    <div class="small-note">Created with ❤️ and &lt;canvas&gt; — No external assets required. Works on desktop & mobile.</div>
+  </div>
+
+  <!-- help overlay -->
+  <div id="overlay" class="overlay" style="display:none">
+    <div class="panel">
+      <h2>How to play</h2>
+      <p class="small">Jump with Space / ↑ or tap the screen. Avoid cactuses and flying spores. Score increases with distance. Night mode, parallax clouds, occasional double-jump powerups, and increasing speed make it spicy.</p>
+      <p style="margin-top:8px"><strong>Tip:</strong> Keep moving right — the game gets faster, but you build combos for bonus score.</p>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button class="btn" id="closeHelp">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* Skybound Dino — single-file game
+     Features:
+     - Canvas rendering
+     - Responsive scaling
+     - Obstacles, clouds, ground with parallax
+     - Score, highscore (localStorage)
+     - Sound effects (simple oscillator)
+     - Touch + keyboard controls
+     - Day/night based on score
+  */
+
+  (()=>{
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    let W = 900, H = 420; // logical size
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize(){
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.floor(rect.width * DPR);
+      canvas.height = Math.floor(rect.height * DPR);
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+
+    // init size
+    canvas.style.width = '100%';
+    canvas.style.height = '420px';
+    resize();
+    window.addEventListener('resize',resize);
+
+    // game state
+    const state = {
+      running:true,
+      score:0,
+      speed:5,
+      spawnTimer:0,
+      obstacles:[],
+      clouds:[],
+      particles:[],
+      lastTime:0,
+      gameOver:false,
+      muted:false,
+      canDoubleJump:false,
+      jumpsUsed:0,
+    };
+
+    // local storage
+    const KEY = 'skybound-dino-high';
+    let high = parseInt(localStorage.getItem(KEY)||'0',10);
+    document.getElementById('high').textContent = high;
+
+    // audio
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq=440,duration=0.06,vol=0.12){
+      if(state.muted) return;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.value = vol;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration);
+      o.stop(audioCtx.currentTime+duration+0.02);
+    }
+
+    // player (dino)
+    const player = {
+      x:80, y:0, w:44, h:36,
+      vy:0, gravity:0.9, jumpPower:-15,
+      grounded:false,
+      anchorY:0,
+      draw(){
+        // simple pixel-ish dino
+        ctx.save();
+        ctx.translate(this.x,this.y);
+        // body
+        roundRect(ctx,0,0,this.w,this.h,6,true,false,'#173b17');
+        // eye
+        ctx.fillStyle='#fff'; ctx.fillRect(28,8,6,6);
+        ctx.fillStyle='#000'; ctx.fillRect(30,10,2,2);
+        // leg
+        ctx.fillStyle='#173b17'; ctx.fillRect(6,this.h-6,8,8);
+        ctx.fillRect(24,this.h-6,8,8);
+        // tail
+        ctx.fillRect(-8,8,8,8);
+        ctx.restore();
+      }
+    };
+
+    // helpers
+    function rnd(min,max){return Math.random()*(max-min)+min}
+    function roundRect(c,x,y,w,h,r,fill,stroke,fillStyle){
+      c.beginPath(); c.moveTo(x+r,y);
+      c.arcTo(x+w,y,x+w,y+h,r);
+      c.arcTo(x+w,y+h,x,y+h,r);
+      c.arcTo(x,y+h,x,y,r);
+      c.arcTo(x,y,x+w,y,r);
+      c.closePath();
+      if(fill){ c.fillStyle = fillStyle||'#000'; c.fill(); }
+      if(stroke) c.stroke();
+    }
+
+    // obstacles
+    function spawnObstacle(){
+      const h = rnd(28,70);
+      const isFlying = Math.random()<0.12; // flying spore
+      const obj = {
+        x: (canvas.clientWidth || 900) + 80,
+        y: isFlying ? rnd(70,170) : (H - 76 - h),
+        w: isFlying ? 36 : rnd(18,34),
+        h: isFlying ? 18 : h,
+        type: isFlying ? 'spore' : 'cactus'
+      };
+      state.obstacles.push(obj);
+    }
+
+    // clouds
+    for(let i=0;i<5;i++) state.clouds.push({x:rnd(0,900),y:rnd(26,140),s:rnd(0.6,1.4)});
+
+    function drawBackground(t){
+      // day/night cycle by score
+      const day = state.score < 500;
+      if(day){
+        document.body.style.background = 'linear-gradient(180deg,#cbe3ff 0%, #98d1ff 60%)';
+      } else {
+        document.body.style.background = 'linear-gradient(180deg,#031026 0%, #0b2540 60%)';
+      }
+
+      // clouds parallax
+      ctx.globalAlpha = day ? 0.85 : 0.5;
+      for(const c of state.clouds){
+        c.x -= (state.speed * 0.35) * 0.2 * c.s;
+        if(c.x < -200) c.x = canvas.clientWidth + rnd(20,200);
+        drawCloud(c.x, c.y, 70*c.s);
+      }
+      ctx.globalAlpha = 1;
+
+      // sun/moon
+      if(day){
+        ctx.beginPath(); ctx.fillStyle = 'rgba(255,235,122,0.95)'; ctx.arc(W-120,80,36,0,Math.PI*2); ctx.fill();
+      } else {
+        ctx.beginPath(); ctx.fillStyle='#f6f7ff'; ctx.arc(W-120,80,20,0,Math.PI*2); ctx.fill();
+      }
+
+      // ground
+      ctx.fillStyle = '#6b4f3a';
+      ctx.fillRect(0,H-60,W,60);
+      // small ridges
+      ctx.fillStyle = '#4f3626';
+      for(let i=0;i<W;i+=18){ctx.fillRect((i + ((t*0.3)%18))|0,H-56,8,6)}
+    }
+
+    function drawCloud(x,y,size){
+      ctx.save(); ctx.translate(x,y);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.beginPath(); ctx.ellipse(0,0,size*0.45,size*0.35,0,0,Math.PI*2); ctx.ellipse(size*0.4,0,size*0.45,size*0.35,0,0,Math.PI*2); ctx.ellipse(size*0.8,0,size*0.45,size*0.35,0,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+
+    // draw obstacle
+    function drawObstacle(o){
+      ctx.save(); ctx.translate(o.x,o.y);
+      if(o.type === 'cactus'){
+        ctx.fillStyle='#146114';
+        roundRect(ctx,0,0,o.w,o.h,6,true,false,'#146114');
+        // arms
+        ctx.fillRect(6, o.h*0.2, o.w*0.3, 6);
+        ctx.fillRect(o.w*0.5, o.h*0.3, o.w*0.25, 6);
+      } else {
+        // spore / flying enemy
+        ctx.fillStyle='#b04f7f';
+        ctx.beginPath(); ctx.ellipse(o.w/2, o.h/2, o.w/2, o.h/2, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle='#fff'; ctx.fillRect(o.w*0.3, o.h*0.35, 4,4);
+      }
+      ctx.restore();
+    }
+
+    // particles
+    function spawnParticles(x,y,qty=8){
+      for(let i=0;i<qty;i++){
+        state.particles.push({x,y,vx:rnd(-4,4),vy:rnd(-6,-1),life: rnd(20,60)})
+      }
+    }
+
+    function updateParticles(){
+      for(let i=state.particles.length-1;i>=0;i--){
+        const p = state.particles[i];
+        p.vy += 0.3; p.x += p.vx; p.y += p.vy; p.life -= 1;
+        ctx.fillStyle = 'rgba(80,60,40,'+(p.life/60)+')';
+        ctx.fillRect(p.x,p.y,3,3);
+        if(p.life<=0) state.particles.splice(i,1);
+      }
+    }
+
+    // collision
+    function rectsCollide(a,b){
+      return !(a.x+a.w < b.x || a.x > b.x+b.w || a.y+a.h < b.y || a.y > b.y+b.h);
+    }
+
+    // game loop
+    function loop(ts){
+      if(!state.lastTime) state.lastTime = ts; const dt = Math.min(40, ts - state.lastTime); state.lastTime = ts;
+      // clear
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // adapt logical size W/H to current canvas size
+      const rect = canvas.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+
+      // background
+      drawBackground(ts*0.001);
+
+      // update player physics
+      player.anchorY = H - 60 - player.h; // ground position
+      player.vy += player.gravity * (dt/16);
+      player.y += player.vy * (dt/16);
+      if(player.y >= player.anchorY){ player.y = player.anchorY; player.vy = 0; player.grounded = true; state.jumpsUsed = 0; }
+      else player.grounded = false;
+
+      // draw player shadow
+      ctx.save(); ctx.globalAlpha = 0.2; ctx.fillStyle='#000';
+      ctx.beginPath(); ctx.ellipse(player.x+player.w/2, player.anchorY+player.h+6, 20,6,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+
+      // draw player
+      player.draw();
+
+      // obstacles movement
+      for(let i=state.obstacles.length-1;i>=0;i--){
+        const o = state.obstacles[i];
+        o.x -= state.speed * (o.type==='spore'?1.6:1) * (dt/16);
+        drawObstacle(o);
+        // offscreen
+        if(o.x + o.w < -40) state.obstacles.splice(i,1);
+        // collision
+        const pbox = {x:player.x+6,y:player.y+6,w:player.w-12,h:player.h-10};
+        const obox = {x:o.x,y:o.y,w:o.w,h:o.h};
+        if(rectsCollide(pbox,obox) && !state.gameOver){
+          // collision reaction
+          spawnParticles(player.x+player.w/2, player.y+player.h/2, 24);
+          beep(120,0.15,0.18);
+          state.gameOver = true; state.running=false;
+          showGameOver();
+        }
+      }
+
+      // spawn timing
+      state.spawnTimer += dt;
+      const spawnInterval = Math.max(550 - (state.score/6), 220);
+      if(state.spawnTimer > spawnInterval){ state.spawnTimer = 0; spawnObstacle(); }
+
+      // occasionally spawn powerup (double-jump)
+      if(Math.random() < 0.0015 && !state.canDoubleJump && state.obstacles.length < 3){
+        // powerup as small star
+        state.obstacles.push({x: W + 40, y: rnd(90, H-180), w: 18, h:18, type:'power'});
+      }
+
+      // draw powerups and special collision
+      for(let i=state.obstacles.length-1;i>=0;i--){
+        const o = state.obstacles[i];
+        if(o.type === 'power'){
+          o.x -= state.speed * 1.2 * (dt/16);
+          // star
+          ctx.save(); ctx.translate(o.x,o.y); ctx.fillStyle='#ffd36b';
+          drawStar(ctx, o.w/2, o.h/2, 5, 6, 3); ctx.restore();
+          if(rectsCollide({x:player.x+6,y:player.y+6,w:player.w-12,h:player.h-10},o)){
+            state.canDoubleJump = true; state.obstacles.splice(i,1); beep(800,0.08,0.06);
+            // tiny flash
+            spawnParticles(player.x+player.w/2, player.y+player.h/2, 12);
+          }
+        }
+      }
+
+      // particles
+      updateParticles();
+
+      // score
+      if(!state.gameOver){ state.score += 0.12 * (state.speed/4) * (dt/16); }
+      document.getElementById('score').textContent = Math.floor(state.score);
+
+      // increase difficulty slowly
+      if(!state.gameOver) state.speed += 0.0009 * dt;
+
+      // ground dust when landing
+      if(player.grounded && player.vy===0 && Math.random()<0.005) spawnParticles(player.x+10, player.anchorY+player.h-6, 6);
+
+      if(!state.gameOver) requestAnimationFrame(loop);
+    }
+
+    function showGameOver(){
+      // update highscore
+      const s = Math.floor(state.score);
+      if(s > high){ high = s; localStorage.setItem(KEY, high); document.getElementById('high').textContent = high; }
+
+      // small modal
+      const overlay = document.createElement('div'); overlay.className='overlay';
+      overlay.innerHTML = `<div class="panel"><h2>Game Over</h2><p class='small'>Score: <strong>${s}</strong></p><p class='small'>Highscore: <strong>${high}</strong></p><div style='display:flex;gap:8px;justify-content:flex-end;margin-top:12px'><button class='btn' id='restart2'>Play again</button></div></div>`;
+      document.body.appendChild(overlay);
+      document.getElementById('restart2').addEventListener('click',()=>{ overlay.remove(); restart(); });
+    }
+
+    function drawStar(c,x,y,points,outerR,innerR){
+      c.beginPath(); for(let i=0;i<2*points;i++){ const r = i%2?innerR:outerR; const a = i*Math.PI/points; c.lineTo(x + Math.cos(a)*r, y + Math.sin(a)*r);} c.closePath(); c.fill();
+    }
+
+    // simple jump handler
+    function jump(){
+      if(state.gameOver) return;
+      if(player.grounded){ player.vy = player.jumpPower; player.grounded = false; beep(900,0.06,0.08); spawnParticles(player.x+8, player.y+player.h-4, 8); }
+      else if(state.canDoubleJump && state.jumpsUsed < 1){ player.vy = player.jumpPower * 0.9; state.jumpsUsed++; state.canDoubleJump = false; beep(1200,0.05,0.06); spawnParticles(player.x+8, player.y+player.h/2, 10); }
+    }
+
+    // control listeners
+    window.addEventListener('keydown', (e)=>{
+      if(e.code === 'Space' || e.code === 'ArrowUp'){ e.preventDefault(); jump(); }
+      if(e.code === 'KeyM'){ toggleMute(); }
+      if(e.code === 'KeyR'){ restart(); }
+    });
+    // touch
+    canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); jump(); });
+    canvas.addEventListener('mousedown', ()=> jump());
+
+    // UI buttons
+    document.getElementById('btnRestart').addEventListener('click', restart);
+    document.getElementById('btnMute').addEventListener('click', toggleMute);
+    document.getElementById('btnHelp').addEventListener('click', ()=>{ document.getElementById('overlay').style.display='grid' });
+    document.getElementById('closeHelp').addEventListener('click', ()=>{ document.getElementById('overlay').style.display='none' });
+
+    function toggleMute(){ state.muted = !state.muted; document.getElementById('btnMute').textContent = state.muted ? '🔇' : '🔊'; }
+
+    function restart(){
+      state.obstacles = []; state.particles = []; state.score = 0; state.speed = 5; state.spawnTimer = 0; state.gameOver = false; state.running=true; state.canDoubleJump=false; state.jumpsUsed=0; state.lastTime = 0; document.getElementById('score').textContent = 0; requestAnimationFrame(loop);
+    }
+
+    // utility: spawn initial cactus cluster
+    for(let i=0;i<3;i++){
+      state.obstacles.push({x: W + i*200 + 130, y: H-76- rnd(28,70), w: rnd(14,34), h: rnd(28,70), type:'cactus'});
+    }
+
+    // small intro animation: bounce dino onto ground
+    player.y = H - 200; player.vy = 0;
+    // start loop
+    requestAnimationFrame(loop);
+
+  })();
+  </script>
+</body>
+</html>
