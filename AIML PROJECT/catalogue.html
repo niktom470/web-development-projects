@@ -7,74 +7,40 @@
   <link rel="stylesheet" href="Style.css">
   <style>
     table {
-      background-color: #8fbc8f;
-      width: 100%;
-      border-collapse: collapse;
+      background-color: #8fbc8f;width: 100%;border-collapse: collapse;
     }
     th, td {
-      border: 3px solid black;
-      padding: 10px;
-      text-align: left;
-      vertical-align: top;
+      border: 3px solid black;padding: 10px;text-align: left;vertical-align: top;
     }
     p {
-      font-size: 1.2rem;
-      margin: 5px 0;
+      font-size: 1.2rem;margin: 5px 0;
     }
     img.book-image {
-      width: 120px;
-      height: auto;
+      width: 120px;height: auto;
     }
     button {
-      cursor: pointer;
-      padding: 5px 10px;
-      font-size: 1rem;
+      cursor: pointer;padding: 5px 10px;font-size: 1rem;
     }
   </style>
 </head>
-<body>
-  <header>
+<body><header>
     <table width="100%" border="3" cellspacing="0" cellpadding="0">
-      <tr>
-        <td align="center">
-          <img src="./JSSATE_Noida.png" alt="LOGO" width="70" />
-        </td>
-        <td colspan="4">
-          <h1 style="text-align: center">JSS LIBRARY, NOIDA</h1>
-        </td>
-      </tr>
-      <tr>
-        <td align="center"><a href="./book store.html"><img src="./home.png" alt="HOME" width="40" /></a></td>
+      <tr><td align="center"><img src="./JSSATE_Noida.png" alt="LOGO" width="70" /></td>
+  <td colspan="4"><h1 style="text-align: center">JSS LIBRARY, NOIDA</h1></td></tr><tr>
+  <td align="center"><a href="./book store.html"><img src="./home.png" alt="HOME" width="40" /></a></td>
         <td align="center"><a href="./form1.html">Login</a></td>
         <td align="center"><a href="./form1.html">Registration</a></td>
         <td align="center"><a href="./catalogue.html">Catalogue</a></td>
         <td align="center"><a href="./Cart.html">Cart</a></td>
-      </tr>
-    </table>
-  </header>
-
-  <br /><br />
-
+      </tr></table></header><br /><br />
   <table id="bookTable">
-    <thead>
-      <tr>
-        <th>Book Image</th>
-        <th>Details</th>
-        <th>Add to Cart</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Books will be loaded here by JavaScript -->
-    </tbody>
+    <thead><tr><th>Book Image</th><th>Details</th><th>Add to Cart</th></tr></thead>
+    <tbody></tbody>
   </table>
-
   <script>
-    // Function to show alert when a book is selected
     function addToCart(bookName) {
       alert(`You have selected the book: ${bookName}`);
     }
-
-    // Fetch and parse XML, then build the table rows
     fetch('book.xml')
       .then(response => {
         if (!response.ok) throw new Error('Network response was not ok');
@@ -91,20 +57,11 @@
           const author = items[i].getElementsByTagName('AUTHOR')[0].textContent;
           const publisher = items[i].getElementsByTagName('PUBLISHER')[0].textContent;
           const price = items[i].getElementsByTagName('PRICE')[0].textContent;
-
-          // Create a table row
           const tr = document.createElement('tr');
-
-          // Image cell
           const tdImage = document.createElement('td');
           const img = document.createElement('img');
-          img.src = image;
-          img.alt = name;
-          img.className = 'book-image';
-          tdImage.appendChild(img);
+          img.src = image;img.alt = name;img.className = 'book-image';tdImage.appendChild(img);
           tr.appendChild(tdImage);
-
-          // Details cell
           const tdDetails = document.createElement('td');
           tdDetails.innerHTML = `
             <p><strong>Book:</strong> ${name}</p>
@@ -113,16 +70,11 @@
             <p><strong>Price:</strong> $${price}</p>
           `;
           tr.appendChild(tdDetails);
-
-          // Add to Cart button cell
           const tdButton = document.createElement('td');
           const button = document.createElement('button');
           button.textContent = 'Add to Cart';
           button.addEventListener('click', () => addToCart(name));
-          tdButton.appendChild(button);
-          tr.appendChild(tdButton);
-
-          // Append row to tbody
+          tdButton.appendChild(button);tr.appendChild(tdButton);
           tbody.appendChild(tr);
         }
       })
