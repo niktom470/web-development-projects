@@ -3,19 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>object</title>
 </head>
 <body>
  <script>
+  // console.log('kio'.lenght());
+  console.log('kio'.toUpperCase());
+  
   const product ={
     name: 'socks',
     price:764382,
   };
-  
+  const {name,price}=product;
+  console.log(JSON.stringify(product));
+  const jsonString=JSON.stringify(product);
+  console.log(JSON.parse(jsonString));
   const product2 ={
-    name:'shirt',
+    name,
+    method() {
+      console.log('method');
+    }
   };
-  console.log(product2['name']);
+  localStorage.setItem('score',JSON.stringify(product));
+  console.log(product2);
+  product2.method();
  </script>   
 </body>
 </html>
