@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>boolean</title>
+    <title>9-Rock Paper Scissors</title>
 </head>
 <body>
     <p>Rock Paper Scissors</p>
     <button onclick="playGame('rock');">Rock</button>
     <button  onclick="playGame('paper');">Paper</button>
     <button  onclick="playGame('scissors');">Scissors</button>
+    
+    <p class="js-result"></p>
+    <p class="js-moves"></p>
+    <p class="js-score"></p>
+
     <button  onclick="score.wins=0;score.lose=0;score.tie=0;
-    localStorage.removeItem('score');">Reset Score</button>
+    localStorage.removeItem('score');updateScoreElement();">Reset Score</button>
     
     
     <script>
@@ -21,7 +26,9 @@
             lose: 0,
             tie: 0
         };
-    
+        
+        updateScoreElement();
+      
          let computerMove='';
 
      function pickComputerMove(){
@@ -83,10 +90,21 @@
             score.tie+=1;
         }
         localStorage.setItem('score',JSON.stringify(score));
-     alert(`You picked ${playerMove}. Computer picked ${computerMove}.${result}
-Wins:${score.wins},Loses:${score.lose},Ties:${score.tie}`);
+        
+        updateScoreElement();
+
+         document.querySelector('.js-result').innerHTML= result;
+
+          document.querySelector('.js-moves').innerHTML= `You ${playerMove}-${computerMove}
+              Computer`;
+     
     }
+          function updateScoreElement() {
+          document.querySelector('.js-score').innerHTML=`
+        Wins:${score.wins},Loses:${score.lose},Ties:
+        ${score.tie}`;
     
+    }
     </script>
 </body>
 </html>
