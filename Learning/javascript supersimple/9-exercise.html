@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9-exercise</title>
+</head>
+<body>
+    <input placeholder="NAME" class="js-name" onkeydown="console.log(event.key);
+    useKey(event)">
+    <button onclick="notify();">SUBMIT</button>
+    <p class="name"></p>
+    <script>
+
+
+function useKey(event){
+     if(event.key==='Enter'){
+        notify();
+     }
+}
+        
+        function notify() {
+            let nameElement = document.querySelector('.js-name');
+            document.querySelector('.name').innerHTML = `Your name is:
+             ${nameElement.value}`;
+             console.log(`${nameElement.value}`);
+        }
+    </script>
+</body>
+</html>
