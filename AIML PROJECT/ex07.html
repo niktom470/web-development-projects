@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Store</title>
+    <style>
+      table{
+        background-color:#8FBC8F;
+      }
+      p{
+        font-size: 2rem;
+      }
+          section {
+      flex: 1;
+      text-align: left;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #004080;
+    }
+    form {
+      width: 60%;
+      margin: auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input[type=text], input[type=password], input[type=email], textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    input[type=radio], input[type=checkbox] {
+      margin-right: 10px;
+    }
+    textarea {
+      height: 80px;
+      resize: none;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #004080;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0066cc;
+    }
+
+    </style></head>
+    <body>
+    <header>
+      <table width="100%" border="3" cellspacing="0" cellpadding="0">
+        <tr><td align="center">
+            <img src="./JSSATE_Noida.png" alt="LOGO" width="70px" />
+          </td><td colspan="4" >
+            <h1 style="text-align: center">JSS LIBRARY,NOIDA</h1>>
+          </td>
+        </tr>
+        <tr>
+          <td align="center"><a href="./book store.html"
+             ><img src="./home.png" alt="HOME" width="40px"/></a></td>
+          <td align="center"><a href="./form1.html">Login</a></td>
+          <td align="center"><a href="./form1.html">Registration</a></td>
+          <td align="center"><a href="./catalogue.html">Catalogue</a></td>
+          <td align="center"><a href="./Cart.html">Cart</a></td>
+        </tr>
+      </table>
+    </header> <br /><br />
+   <table border="3" cellpadding="10" cellspacing="0" width="100%" height="70%">
+  <tr>
+    <!-- <td valign="top" width="20%">
+      <b>Departments</b><br><br><a href="">CSE<br></a><a href="">IT<br></a>
+      <a href="">ECE<br></a><a href="">EE<br></a> <a href=""> CIVIL</a>
+    </td> -->
+    <td valign="top" width="80%">
+         <section>
+      <h2>Registration Form</h2>
+      <form onsubmit="return validateForm()">
+        <label>Name</label>
+        <input type="text" id="name" name="name" required>
+        <label>Password</label>
+        <input type="password" id="password" name="password" required>
+        <label>Email ID</label>
+        <input type="email" id="email" name="email" required>
+        <label>Phone Number</label>
+        <input type="text" id="phone" name="phone" required>
+        <label>Sex</label>
+        <input type="radio" name="sex" value="Male">Male
+        <input type="radio" name="sex" value="Female">Female
+        <label>Date of Birth</label>
+        <select name="day">
+          <option value="">Day</option>
+          <script>for(let d=1;d<=31;d++){document.write('<option>'+d+'</option>');}</script>
+        </select>
+        <select name="month">
+          <option value="">Month</option>
+          <script>["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].forEach(m=>document.write('<option>'+m+'</option>'));</script>
+        </select>
+        <select name="year">
+          <option value="">Year</option>
+          <script>for(let y=1970;y<=2025;y++){document.write('<option>'+y+'</option>');}</script>
+        </select>
+        <label>Languages Known</label>
+        <input type="checkbox" name="lang" value="English">English
+        <input type="checkbox" name="lang" value="Telugu">Telugu
+        <input type="checkbox" name="lang" value="Hindi">Hindi
+        <input type="checkbox" name="lang" value="Tamil">Tamil
+        <label>Address</label>
+        <textarea name="address"></textarea>
+        <button type="submit">Register</button>
+      </form>
+    </section>
+  </main>
+  <script>
+    function validateForm() {
+      const email=document.getElementById("email").value.trim();
+      const phone=document.getElementById("phone").value.trim();
+      const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex=/^\d{10}$/;
+      if(!emailRegex.test(email)){alert("Enter a valid Email ID (example: name@domain.com).");return false;}
+      if(!phoneRegex.test(phone)){alert("Phone number should contain exactly 10 digits.");return false;}
+      alert("Validated Email and Phone number!");
+      return true;
+    }
+  </script>
+</td></tr>
+</table>
+</body>
+</html>
