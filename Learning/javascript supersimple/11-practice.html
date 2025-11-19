@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array and Loop</title>
+</head>
+<body>
+
+    <button onclick="getLastValue(nums);">get last vaue</button>
+    <button onclick="arraySwap(nums);">array swap</button>
+    <button onclick="minMax(num);">Max-Min</button>
+    <button onclick="countWords(words);">countWords</button>
+    <script>
+        let nums = [10,20,30,45,66,77];
+        let num = [7];
+        console.log(nums);
+
+        let words = ['apple','rose','rose','banana'];
+      
+        function getLastValue(array){
+            const len = array.length;
+            const lastElement = array[len-1];
+            console.log(lastElement);
+        }
+        function arraySwap(array){
+           const len = array.length;
+           const temp =array[0];
+           array[0] = array[len-1];
+           array[len-1] = temp;
+           console.log(array);
+        }
+        function minMax(array){
+           
+           if(array.length===0){
+             console.log(`max: null , min: null`);
+             return;
+            }
+            let Max = Math.max(...array);
+            let Min = Math.min(...array);
+            console.log(`max: ${Max} , min: ${Min}`);
+        }
+
+       function countWords(words) {
+            let result = {};
+
+            for (let word of words) {
+                if (result[word]) {
+                result[word]++;  
+                } else {
+                result[word] = 1; 
+                }
+            }
+
+            console.log(result);
+            }
+
+    </script>
+</body>
+</html>
